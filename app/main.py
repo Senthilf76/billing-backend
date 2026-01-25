@@ -12,7 +12,9 @@ def startup():
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[ "https://gst-billing-frontend.vercel.app",
+        "https://gst-billing-frontend-8mig3ykgx-senthil-kumars-projects-57ee8ae8.vercel.app"
+        ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
