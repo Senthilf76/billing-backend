@@ -2,13 +2,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import engine, Base
-from app.routers import invoice, auth, gst   # ✅ import routers
-
-# ✅ CREATE TABLES
-Base.metadata.create_all(bind=engine)
+from app.routers import invoice, auth, gst
 
 # ✅ CREATE APP FIRST
 app = FastAPI()
+
+# ✅ RUN DB INIT ON STARTUP (SAFE)
+@app.on_event("startup")
+def on_startup():
+    Base.metadata.create_all(bind=engine)
 
 # ✅ CORS
 app.add_middleware(
@@ -19,7 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ✅ INCLUDE ROUTERS (AFTER app exists)
+# ✅ INCLUDE ROUTERS
 app.include_router(auth.router)
 app.include_router(invoice.router)
 app.include_router(gst.router)
