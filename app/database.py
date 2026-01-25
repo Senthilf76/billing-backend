@@ -1,23 +1,25 @@
-from urllib.parse import quote_plus
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-# MySQL credentials
-username = "root"
-password = "Senthil@07"  # your actual password
-host = "localhost"
-database = "gst_billings"
+# Read DATABASE_URL from environment (Railway / local)
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# URL-encode the password
-encoded_password = quote_plus(password)
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL environment variable is not set")
 
-# Create the database URL
-DATABASE_URL = f"mysql+pymysql://{username}:{encoded_password}@{host}/{database}"
+# Create SQLAlchemy engine
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+)
 
-# SQLAlchemy setup
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine)
+# Session
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+
+# Base
 Base = declarative_base()
-
-# Optional: create tables
-Base.metadata.create_all(bind=engine)
