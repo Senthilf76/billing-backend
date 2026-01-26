@@ -15,7 +15,9 @@ SECRET_KEY = "CHANGE_THIS_SECRET"
 ALGORITHM = "HS256"
 
 
-
+# -------------------------
+# DB Dependency
+# -------------------------
 def get_db():
     db = SessionLocal()
     try:
@@ -24,34 +26,45 @@ def get_db():
         db.close()
 
 
-
+# -------------------------
+# LOGIN (JSON — FRONTEND SAFE)
+# -------------------------
 @router.post("/login")
 def login(data: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == data.username).first()
 
     if not user:
-        raise HTTPException(status_code=401, detail="Invalid username or password")
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid username or password",
+        )
 
-    try:
-        if not verify_password(data.password, user.password_hash):
-            raise HTTPException(status_code=401, detail="Invalid username or password")
-    except Exception:
-        # handles corrupted / legacy hashes safely
-        raise HTTPException(status_code=401, detail="Invalid username or password")
+    if not verify_password(data.password, user.password_hash):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid username or password",
+        )
 
     token = jwt.encode(
-        {"user_id": user.id, "role": user.role},
+        {
+            "user_id": user.id,
+            "username": user.username,
+            "role": user.role,
+        },
         SECRET_KEY,
         algorithm=ALGORITHM,
     )
 
     return {
         "access_token": token,
+        "token_type": "bearer",
         "role": user.role,
     }
 
 
-
+# -------------------------
+# RESET PASSWORD
+# -------------------------
 @router.post("/reset-password")
 def reset_password(
     data: PasswordResetRequest,
@@ -64,12 +77,12 @@ def reset_password(
         raise HTTPException(status_code=404, detail="User not found")
 
     if not verify_password(data.current_password, user.password_hash):
-        raise HTTPException(status_code=401, detail="Current password is incorrect")
+        raise HTTPException(
+            status_code=401,
+            detail="Current password is incorrect",
+        )
 
     user.password_hash = get_password_hash(data.new_password)
     db.commit()
 
     return {"status": "password updated successfully"}
-
-
-
