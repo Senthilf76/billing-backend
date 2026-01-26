@@ -6,6 +6,7 @@ from app.routers import auth, invoice, gst
 
 app = FastAPI()
 
+
 @app.on_event("startup")
 async def startup():
     # ✅ Create tables
@@ -36,11 +37,12 @@ async def startup():
 # ✅ CORS (keep this)
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"http://localhost(:\d+)?",
-    allow_credentials=False,
-    allow_methods=["*"],
+    allow_origins=["https://gst-billing-frontend.vercel.app"],  # allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # IMPORTANT for OPTIONS
     allow_headers=["*"],
 )
+
 
 # ✅ Routers
 app.include_router(auth.router)
