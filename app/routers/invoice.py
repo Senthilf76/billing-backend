@@ -9,7 +9,7 @@ from app.models.invoice import Invoice
 from app.models.invoice_item import InvoiceItem
 from fastapi.responses import FileResponse
 import os
-from app.utiles.pdf_generator import generate_invoice_pdf
+from app.utils.pdf_generator import generate_invoice_pdf
 
 
 router = APIRouter(prefix="/api/invoices", tags=["Invoices"])

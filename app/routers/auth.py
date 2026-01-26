@@ -4,7 +4,7 @@ from jose import jwt
 
 from app.database import SessionLocal
 from app.models.user import User
-from app.utiles.security import verify_password
+from app.utils.security import verify_password
 from app.schemas.auth_schema import LoginRequest
 
 router = APIRouter(prefix="/api", tags=["Auth"])
