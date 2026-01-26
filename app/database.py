@@ -18,9 +18,12 @@ if not DATABASE_URL:
         "Set it locally in .env.local or as an environment variable."
     )
 
+# ✅ IMPORTANT: MySQL + Railway safe engine config
 engine = create_engine(
     DATABASE_URL,
-    pool_pre_ping=True
+    pool_pre_ping=True,     # prevents stale connections
+    pool_recycle=1800,      # reconnect every 30 min
+    echo=False
 )
 
 SessionLocal = sessionmaker(
