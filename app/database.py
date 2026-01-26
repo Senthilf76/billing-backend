@@ -2,18 +2,19 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# Read environment
+# Read environment (default to production on Railway)
 ENV = os.getenv("ENV", "production")
 
 # Choose database URL
 if ENV == "local":
     DATABASE_URL = os.getenv("LOCAL_DATABASE_URL")
 else:
-    DATABASE_URL = os.getenv("DATABASE_URL")
+    # IMPORTANT: use DB_URL instead of DATABASE_URL on Railway
+    DATABASE_URL = os.getenv("DB_URL")
 
-# Safety check (VERY IMPORTANT)
+# Safety check
 if not DATABASE_URL:
-    raise RuntimeError("DATABASE_URL is not set")
+    raise RuntimeError("DB_URL is not set")
 
 engine = create_engine(
     DATABASE_URL,
