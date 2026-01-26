@@ -73,15 +73,4 @@ def reset_password(
 
 
 
-@router.post("/reset-admin-temp")
-def reset_admin_temp(db: Session = Depends(get_db)):
-    admin = db.query(User).filter(User.username == "admin").first()
-
-    if not admin:
-        raise HTTPException(status_code=404, detail="Admin not found")
-
-    admin.password_hash = get_password_hash("admin123")
-    db.commit()
-
-    return {"status": "admin password reset"}
 
