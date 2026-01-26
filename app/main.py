@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 
 from app.database import engine, Base
 from app.routers import auth, invoice, gst
@@ -34,19 +35,30 @@ async def startup():
     finally:
         db.close()
 
-# ✅ CORS (keep this)
+
+# ✅ CORS (PRODUCTION SAFE)
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"https://.*\.vercel\.app",
-    allow_methods=["*"],  # IMPORTANT for OPTIONS
+    allow_origins=[
+        "https://gst-billing-frontend.vercel.app",
+    ],
+    allow_credentials=False,  # IMPORTANT (no cookies)
+    allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# ✅ GLOBAL OPTIONS HANDLER (CRITICAL FIX)
+@app.options("/{full_path:path}")
+async def options_handler(request: Request, full_path: str):
+    return Response(status_code=200)
 
 
 # ✅ Routers
 app.include_router(auth.router)
 app.include_router(invoice.router)
 app.include_router(gst.router)
+
 
 @app.get("/")
 def root():
