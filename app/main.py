@@ -37,8 +37,7 @@ async def startup():
 # ✅ CORS (keep this)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://gst-billing-frontend.vercel.app"],  # allow all origins
-    allow_credentials=True,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_methods=["*"],  # IMPORTANT for OPTIONS
     allow_headers=["*"],
 )
