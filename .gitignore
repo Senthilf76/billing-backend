@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+.env.local
+venv/
+
+# Node / React
+node_modules/
+build/
+dist/
+
+# PDFs & generated files
+invoices/
+*.pdf
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Frontend files (ignore in backend repo)
+package.json
+package-lock.json
+node_modules/
