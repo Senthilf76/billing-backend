@@ -40,7 +40,7 @@ async def startup():
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3001",git
+        "http://localhost:3001",
         "http://localhost:3000",
         "https://gst-billing-frontend.vercel.app",
     ],
